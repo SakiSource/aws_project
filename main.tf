@@ -10,14 +10,22 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = "eu-west-2"
 }
 
-resource "aws_instance" "app_server" {
-  ami           = "ami-830c94e3"
+resource "aws_default_vpc" "test_vpc" {
+  tags = {
+    Name = "test"
+  }
+}
+
+resource "aws_instance" "test_instance" {
+  ami           = "ami-0c0493bbac867d427"
   instance_type = "t2.micro"
+  
+  depends_on = [aws_default_vpc.test_vpc]
 
   tags = {
-    Name = "ExampleAppServerInstance"
+    Name = "test"
   }
 }
