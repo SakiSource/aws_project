@@ -13,19 +13,38 @@ provider "aws" {
   region = "eu-west-2"
 }
 
-resource "aws_default_vpc" "test_vpc" {
+# Create Security Group
+resource "aws_security_group" "upskill_security_group" {
+  name        = "Allow All"
+  description = "[DANGER] - Allows all inbound and outbound traffic, exercise caution when using."
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
-    Name = "test"
+    Name = "upskill"
   }
 }
 
-resource "aws_instance" "test_instance" {
-  ami           = "ami-0c0493bbac867d427"
-  instance_type = "t2.micro"
-  
-  depends_on = [aws_default_vpc.test_vpc]
+# Create EC2 Instance
+resource "aws_instance" "upkill_server" {
+  ami                    = "ami-0b31d93fb777b6ae6"
+  instance_type          = "t2.micro"
+  key_name               = "upskill-ssh"
+  vpc_security_group_ids = [aws_security_group.upskill_security_group.id]
 
   tags = {
-    Name = "test"
+    Name = "upskill"
   }
 }
